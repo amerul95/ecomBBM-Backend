@@ -15,7 +15,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 const dbConfig = {
     user: 'test',
     password: '123',
-    server: 'AMERUL', 
+    server: 'POLYGOT', 
     database: 'ecomBBM',
     options: {
         encrypt: true,
