@@ -2,40 +2,48 @@ const express = require('express');
 const sql = require('mssql');
 const cors = require('cors');
 const path = require('path');
+const authRoutes = require('./routes/authRoutes'); // Import authentication routes
+const dbConfigEcom = require('./config/dbConfigEcom'); // Correct path to ecom config
+const dbConfigAuth = require('./config/dbConfigAuth'); // Correct path to auth config
 
 const app = express();
 const port = 3001;
 
 app.use(cors());
+app.use(express.json()); // Parse JSON bodies
 
 // Serve static files from the "public" directory
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-// Database configuration
-const dbConfig = {
-    user: 'test',
-    password: '123',
-    server: 'POLYGOT', 
-    database: 'ecomBBM',
-    options: {
-        encrypt: true,
-        trustServerCertificate: true
-    }
-};
+// Create connection pools for each database
+const ecomDBPool = new sql.ConnectionPool(dbConfigEcom);
+const authDBPool = new sql.ConnectionPool(dbConfigAuth);
 
-// Connect to the database
-sql.connect(dbConfig, err => {
+// Connect to the ecomBBM database
+ecomDBPool.connect(err => {
     if (err) {
-        console.error('Database connection failed: ', err);
-        return;
+        console.error('Failed to connect to ecomBBM database:', err);
+    } else {
+        console.log('Connected to ecomBBM database');
     }
-    console.log('Connected to the database');
 });
 
-// Endpoint to fetch products with optional category filtering
+// Connect to the AuthDB database
+authDBPool.connect(err => {
+    if (err) {
+        console.error('Failed to connect to AuthDB database:', err);
+    } else {
+        console.log('Connected to AuthDB database');
+    }
+});
+
+// Use authentication routes
+app.use('/auth', authRoutes);
+
+// Existing product endpoint
 app.get('/products/:category?', async (req, res) => {
     try {
-        const { category } = req.params; // Get the category from URL parameters
+        const { category } = req.params;
 
         let query = `
         SELECT 
@@ -83,9 +91,9 @@ app.get('/products/:category?', async (req, res) => {
             p.category;
         `;
 
-        const request = new sql.Request();
+        const request = new sql.Request(ecomDBPool); // Use ecomDBPool for product queries
         if (category) {
-            request.input('category', sql.NVarChar, category); // Bind the category parameter
+            request.input('category', sql.NVarChar, category);
         }
 
         const result = await request.query(query);
