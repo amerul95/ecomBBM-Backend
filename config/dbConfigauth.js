@@ -1,4 +1,4 @@
-// config/dbConfig.js
+// config/dbConfigAuth.js
 require('dotenv').config();
 
 module.exports = {
@@ -6,7 +6,7 @@ module.exports = {
     password: process.env.DB_PASSWORD,
     server: process.env.DB_SERVER,
     database: process.env.DB_DATABASE_AUTH,
-    port: parseInt(process.env.DB_PORT,10),
+    port: parseInt(process.env.DB_PORT, 10),
     options: {
         encrypt: true,
         trustServerCertificate: true

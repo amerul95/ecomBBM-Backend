@@ -3,8 +3,8 @@ const sql = require('mssql');
 const cors = require('cors');
 const path = require('path');
 const authRoutes = require('./routes/authRoutes'); // Import authentication routes
-const dbConfigEcom = require('./config/dbConfigecom.js'); // Correct path to ecom config
-const dbConfigAuth = require('./config/dbConfigauth.js'); // Correct path to auth config
+const dbConfigEcom = require('./config/dbConfigecom'); // Correct path to ecom config
+const dbConfigAuth = require('./config/dbConfigauth'); // Correct path to auth config
 
 const app = express();
 const port = process.env.PORT || 3001;
