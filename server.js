@@ -7,7 +7,7 @@ const dbConfigEcom = require('./config/dbConfigecom.js'); // Correct path to eco
 const dbConfigAuth = require('./config/dbConfigauth.js'); // Correct path to auth config
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json()); // Parse JSON bodies
